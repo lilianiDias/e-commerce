@@ -5,6 +5,7 @@ import { computed } from '@angular/core';
 import { PrecoFormatadoPipe } from '../../../shared/pipes/preco-formatado-pipe';
 import { effect } from '@angular/core';
 import { UpperCasePipe } from '@angular/common';
+import { LiteralMapSpreadAssignment } from '@angular/compiler';
 @Component({
   selector: 'app-lis-produtos',
   imports: [Produto, PrecoFormatadoPipe, UpperCasePipe],
@@ -62,4 +63,21 @@ export class LisProdutos {
 }
 //! Metodo para criar um estado de seleção com signal string | null
 produtoSelecionado = signal <string | null>(null);
+//! Metodo para criar um estado para carrinho com signal
+carrinho = signal <{nome:string, preco:number}[]>([]);
+adicionarAoCarrinho(produto:{nome:string, preco:number}){
+   this.carrinho.update(listaAtual => [...listaAtual, produto]
+   );
+     }
+//totalProdutos = computed(() => this.produtos().length);
+//metodo para calcular  a quantidade total dos items no carrinho
+quantidadeCarrinho = computed(() => this.carrinho().length);
+//metodo para calcular o valor total dos items no carrinho
+totalCarrinho = computed(() => {
+  return this.carrinho().reduce((total, item) => 
+  total + item.preco, 0)});
+
+ //valorTotal = computed(() =>
+  //{return this.produtos().reduce((total, item) =>
+    //total + item.preco,0)});
 }
