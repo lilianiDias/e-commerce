@@ -77,7 +77,7 @@ totalCarrinho = computed(() => {
   return this.carrinho().reduce((total, item) => 
   total + item.preco, 0)});
 
- //valorTotal = computed(() =>
+  //valorTotal = computed(() =>
   //{return this.produtos().reduce((total, item) =>
-    //total + item.preco,0)});
+  //total + item.preco,0)});
 }
