@@ -1,14 +1,29 @@
-import { Routes } from '@angular/router';
-import { LisProdutos } from './features/produtos/lis-produtos/lis-produtos';
-import { Carrinho } from './features/carrinho/carrinho/carrinho';
+import { Routes } from "@angular/router";
+import { authGuard } from "./core/auth.guard";
 
 export const routes: Routes = [
-{
-    path: '',
-    component: LisProdutos,
-},
-{
-    path: 'carrinho',
-    component: Carrinho,
-},
+    {
+        path: '', //!router para raiz Localhost:4200/
+        loadComponent: () =>
+            import('./features/home/home/home') 
+        .then((m) => m.Home),
+            
+    },
+    {
+        path: 'produtos', 
+        loadComponent: () =>
+            import('./features/produtos/lis-produtos/lis-produtos')
+        .then((m) => m.LisProdutos),      
+    },
+    {
+        path:'carrinho',
+        canActivate: [authGuard],
+        loadComponent: () =>
+            import('./features/carrinho/carrinho/carrinho')
+        .then((m) => m.Carrinho),
+    },
+    {
+        path:'**',
+        redirectTo: '',
+    },
 ];
