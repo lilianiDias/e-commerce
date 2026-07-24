@@ -5,6 +5,8 @@ import { computed } from '@angular/core';
 import { PrecoFormatadoPipe } from '../../../shared/pipes/preco-formatado-pipe';
 import { effect } from '@angular/core';
 import { UpperCasePipe } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
+
 import { LiteralMapSpreadAssignment } from '@angular/compiler';
 @Component({
   selector: 'app-lis-produtos',
@@ -13,12 +15,11 @@ import { LiteralMapSpreadAssignment } from '@angular/compiler';
   styleUrl: './lis-produtos.css',
 })
 export class LisProdutos {
-  //lista com dados = Array
-  produtos =  signal ([
-    {nome:'Teclado ', preco:229.99},
-    {nome:'mouse', preco:129.99},
-    {nome:'Monitor', preco:2000}
-  ]);
+  //lista com dados = Array ==========SIGNALS========
+  produtos =  signal <{nome: string; preco: number}[]>([]);
+  carregando = signal (true);
+
+
 //Função para exibir produtos seleciondos pelo usuario no console
   exibirProduto(nome:string){
     console.log('Produto Selecionado:', nome);
@@ -47,8 +48,29 @@ export class LisProdutos {
      {nome:'Headset', preco:30},
     ]);
   }
+   carregarProdutos(){ 
+    this.carregando.set(true);
+    this.http.get<{title: string; price: number}[]>
+    ('https://fakestoreapi.com/products').subscribe({
+      next:(dados) => {
+        const produtosFormatados = dados.map(p =>({
+        nome: p. title,
+        preco: p.price,
+        }));
+        this.produtos.set(produtosFormatados);
+        this.carregando.set(false);
+      },
+      error: (erro) =>{
+        console.error('Erro ao carregar produto:', erro);
+      }
+    });
+   }
+
   //! Metodo para monitorar alterações em tempo real usando effect()
-  constructor(){
+  constructor(private http: HttpClient){
+    this.carregarProdutos();
+  
+    //!effects continuam iguais  - não mexer 
    effect(() => { 
     console.log('Lista de Produtos Alterada:', this.produtos());
     });
