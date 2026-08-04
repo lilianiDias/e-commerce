@@ -16,13 +16,17 @@ import { LiteralMapSpreadAssignment } from '@angular/compiler';
   styleUrl: './lis-produtos.css',
 })
 export class LisProdutos {
-  //lista com dados = Array ==========SIGNALS========
+  //lista com dados = Array 
+  // ==========SIGNALS========
   produtos =  signal <{nome: string; preco: number}[]>([]);
+
   carregando = signal (true);
 
+erro = signal <string | null>(null); 
 
 //Função para exibir produtos seleciondos pelo usuario no console
   exibirProduto(nome:string){
+
     console.log('Produto Selecionado:', nome);
     this.produtoSelecionado.set(nome);
   }
@@ -54,8 +58,8 @@ export class LisProdutos {
     ]);
   }
    carregarProdutos(){ 
-    
-    this.carregando.set(true);
+    this.erro.set(null); //! limpa o erro antes de fazer a requisição
+    this.carregando.set(true); //! ativa op sinal de carregando 
     this.produtosService.buscarProdutos().subscribe({
       next: (dados) => {
         const produtos = this.produtosService.transformarProdutos(dados);
@@ -63,7 +67,8 @@ export class LisProdutos {
         this.carregando.set(false);
       },
       error: (erro) =>{
-        console.error('Erro ao carregagar produto: ', erro);
+        console.error('Erro ao carregagar produto: ', erro); 
+        this.erro.set('Erro ao carregar produtos. Por favor, tente novamente !');
         this.carregando.set(false);
       }
     });
