@@ -26,7 +26,6 @@ erro = signal <string | null>(null);
 
 //Função para exibir produtos seleciondos pelo usuario no console
   exibirProduto(nome:string){
-
     console.log('Produto Selecionado:', nome);
     this.produtoSelecionado.set(nome);
   }
