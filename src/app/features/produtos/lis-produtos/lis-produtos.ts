@@ -5,10 +5,10 @@ import { computed } from '@angular/core';
 import { PrecoFormatadoPipe } from '../../../shared/pipes/preco-formatado-pipe';
 import { effect } from '@angular/core';
 import { UpperCasePipe } from '@angular/common';
-import { produtosService} from '../produtos.service';
+import { produtosService} from '../../../core/services/produtos.service';
 import { inject } from '@angular/core';
+import { CarrinhoService } from '../../../core/services/carrinho.service';
 
-import { LiteralMapSpreadAssignment } from '@angular/compiler';
 @Component({
   selector: 'app-lis-produtos',
   imports: [Produto, PrecoFormatadoPipe, UpperCasePipe],
@@ -31,6 +31,11 @@ erro = signal <string | null>(null);
   }
   //*====== INJECT======
   private produtosService = inject(produtosService);
+
+public carrinhoService = inject (CarrinhoService);
+
+quantidadeCarrinho = this.carrinhoService.quantidadeItens;
+totalCarrinho = this.carrinhoService.totalItens;
 
 
   //!função que adiciona produto usando metodo update ()
@@ -93,23 +98,17 @@ erro = signal <string | null>(null);
 //! Metodo para criar um estado de seleção com signal string | null
 produtoSelecionado = signal <string | null>(null);
 //! Metodo para criar um estado para carrinho com signal
-carrinho = signal <{nome:string, preco:number}[]>([]);
-adicionarAoCarrinho(produto:{nome:string, preco:number}){
-   this.carrinho.update(listaAtual => [...listaAtual, produto]
-   );
-     }
-//totalProdutos = computed(() => this.produtos().length);
-//metodo para calcular  a quantidade total dos items no carrinho
-quantidadeCarrinho = computed(() => this.carrinho().length);
-//metodo para calcular o valor total dos items no carrinho
-totalCarrinho = computed(() => {
-  return this.carrinho().reduce((total, item) => 
-  total + item.preco, 0)});
 
-  //valorTotal = computed(() =>
-  //{return this.produtos().reduce((total, item) =>
-  //total + item.preco,0)});
+adicionarAoCarrinho(produto:{nome: string, preco: number}){
+ this.carrinhoService.adicionar(produto);
+     }
+
+
+  
 }
+
+
+
 
 
 
