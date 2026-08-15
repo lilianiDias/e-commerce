@@ -25,7 +25,7 @@ export class AuthService{
         if(!email || !senha){
             return false;
         }
-
+const perfil:PerfilUsuario = email === 'admin@email.com' ? 'admin' : 'usuario'; 
 const tokenSimulado =
 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.' +
 'eyJzdWIiOiJhbHVub0B0ZXN0ZS5jb20iLCJwZXJmaWwiOiJ1c3VhcmlvIn0.' 
@@ -33,7 +33,7 @@ const tokenSimulado =
 
 this.usuario.set({
     email,
-    perfil: 'usuario'
+    perfil,
 });
 this.tokenJwT.set(tokenSimulado);
 return true;
@@ -43,6 +43,10 @@ return true;
     logout(){
         this.usuario.set(null);
         this.tokenJwT.set(null);
+    }
+
+    obterPerfil():PerfilUsuario | null{
+        return this.usuario()?.perfil ?? null;
     }
 
     obterToken(): string | null {
