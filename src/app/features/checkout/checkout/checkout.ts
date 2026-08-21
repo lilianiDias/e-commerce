@@ -5,6 +5,7 @@ import { CarrinhoFacade } from '../../../core/facades/carrinho.facades';
 import { MatButtonModule } from '@angular/material/button';
 import { RouterLink } from "@angular/router";
 import { PrecoFormatadoPipe } from '../../../shared/pipes/preco-formatado-pipe';
+import { PedidoFinalizado } from '../../../core/models/pedido-finalizado';
 
 @Component({
   selector: 'app-checkout',
@@ -16,7 +17,7 @@ export class Checkout {
 
   carrinhoFacade = inject(CarrinhoFacade);
 
-  compraFinalizada = signal (false);
+  pedidoFinalizado = signal < PedidoFinalizado | null> (null);
   formulario = new FormGroup({
     nome: new FormControl('', [Validators.required, Validators.minLength(2), nomeSemNumeros]),
     email: new FormControl('', [Validators.required, Validators.email]),
@@ -25,7 +26,7 @@ export class Checkout {
 
   finalizar(){
 
-    this.compraFinalizada.set(false);
+  
 
     if (this.carrinhoFacade.carrinhoVazio()) {
       console.log('não pode finalizar compra com o carrinho vazio.');
@@ -40,16 +41,25 @@ return;
    const dados = this.formulario.value;
    const itens = this.carrinhoFacade.itensCarrinho();
   const total = this.carrinhoFacade.totalCarrinho();
+
+  const pedido= {
+  codigo: Date.now(),
+  cliente: dados.nome??'',
+  email: dados.email?? '',
+  quantidadeItens: itens.length,
+  total,
+  itens,
+  }
+  
   
   
   console.log ('Compra finalizada com sucesso!');
    console.log('Dados do Formulário:', dados);
-   console.log('Itens no Carrinho:', itens);
-   console.log('Total das compras:', total);
+   console.log('Dados do pedido:', pedido);
 
    this.carrinhoFacade.limparCarrinho();
    this.formulario.reset();
-   this.compraFinalizada.set(true);
+   this.pedidoFinalizado.set(pedido);
 
   }
 }
@@ -57,7 +67,7 @@ function nomeSemNumeros(controle :AbstractControl): ValidationErrors | null {
   const valor = controle.value;
   if (!valor) return null;
   if (/\d/.test(valor)) {
-    return { numeroInvalido: true };
+    return { numeroInvalido: true};
   }
   return null;
 }
